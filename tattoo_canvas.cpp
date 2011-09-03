@@ -25,13 +25,22 @@ static double rad2deg(double angle) {
 
 TattooCanvas::TattooCanvas(QWidget *parent) {
     revolution = 180.0;
+    stroke = 1;
 
     setMinimumSize(400, 400);
 }
 
+void TattooCanvas::setStroke(int stroke) {
+    this->stroke = stroke;
+
+    std::cout << "New stroke is " << stroke << std::endl;
+
+    update();
+}
+
 void TattooCanvas::paintEvent(QPaintEvent *event) {
     QStylePainter painter(this);
-    QPen pen(Qt::black, 5, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
+    QPen pen(Qt::black, stroke, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
     painter.setPen(pen);
 
     int radius = (std::min(width(), height()) - (2 * Margin)) / 2;

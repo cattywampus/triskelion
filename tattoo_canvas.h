@@ -10,6 +10,9 @@ class TattooCanvas : public QWidget {
 public:
     TattooCanvas(QWidget *parent = 0);
 
+public slots:
+    void setStroke(int stroke);
+
 protected:
     void paintEvent(QPaintEvent *event);
 
@@ -23,6 +26,7 @@ private:
 
     double revolution;
     QPixmap canvas;
+    int stroke;
 };
 
 #endif
