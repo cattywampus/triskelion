@@ -11,6 +11,7 @@ public:
     TattooCanvas(QWidget *parent = 0);
 
 public slots:
+    void setCurveRadius(int radius);
     void setStroke(int stroke);
 
 protected:
@@ -26,6 +27,7 @@ private:
     enum { Margin = 20 };
 
     double revolution;
+    int curveRadius;
     QPixmap canvas;
     int stroke;
 };

@@ -26,8 +26,15 @@ static double rad2deg(double angle) {
 TattooCanvas::TattooCanvas(QWidget *parent) {
     revolution = 180.0;
     stroke = 1;
+    curveRadius = 30;
 
     setMinimumSize(400, 400);
+}
+
+void TattooCanvas::setCurveRadius(int radius) {
+    this->curveRadius = radius;
+
+    update();
 }
 
 void TattooCanvas::setStroke(int stroke) {
@@ -60,20 +67,38 @@ void TattooCanvas::paintEvent(QPaintEvent *event) {
 void TattooCanvas::drawCircles(QPainter *painter) {
     painter->translate(width() / 2.0, height() / 2.0);
 
-    int radius = 30;
+    double tHeight = std::sqrt(3.0 * std::pow((double) curveRadius, 2.0));
+    double y1 = 2.0 / 3.0 * tHeight;
+    double y2 = y1 - tHeight;
 
-    double y1 = 2.0 / 3.0 * std::sqrt(3.0 * std::pow((double) radius, 2.0));
-    double y2 = y1 - std::sqrt(3.0 * std::pow((double) radius, 2));
-
-    painter->drawEllipse(QPoint(0, y1), radius, radius);
-    painter->drawEllipse(QPointF(radius, y2), radius, radius);
-    painter->drawEllipse(QPointF(-radius, y2), radius, radius);
+    //painter->drawEllipse(QPoint(0, y1), radius, radius);
+    painter->drawArc(0 - curveRadius, y1 - curveRadius, curveRadius * 2.0, curveRadius * 2.0, 60 * 16, 60 * 16);
+    //painter->drawEllipse(QPointF(radius, y2), radius, radius);
+    painter->drawArc(0, y2 - curveRadius, curveRadius * 2.0, curveRadius * 2.0, 180 * 16, 60 * 16);
+    //painter->drawEllipse(QPointF(-radius, y2), radius, radius);
+    painter->drawArc(0 - 2.0 * curveRadius, y2 - curveRadius, curveRadius * 2.0, curveRadius * 2.0, 0, -60 * 16);
 
     painter->translate(0, y2);
     painter->rotate(270);
 
     int tatRadius = (std::min(width(), height()) - (2 * Margin)) / 2;
     drawSpiral(painter, tatRadius - y2, 0);
+    painter->rotate(-270);
+    
+    double xOffset = (1.0 / 3.0 * tHeight) * std::cos(deg2rad(30.0));
+    double yOffset = (1.0 / 3.0 * tHeight) * std::sin(deg2rad(30.0)); 
+
+    painter->resetTransform();
+    painter->translate(width() / 2.0, height() / 2.0);
+    painter->translate(xOffset, yOffset);
+    painter->rotate(270);
+    drawSpiral(painter, tatRadius - y2, 120);
+
+    painter->resetTransform();
+    painter->translate(width() / 2.0, height() / 2.0);
+    painter->translate(-xOffset, yOffset);
+    painter->rotate(270);
+    drawSpiral(painter, tatRadius - y2, 240);
 }
 
 void TattooCanvas::drawCurves(QPainter *painter, int radius, int curve1, int curve2) {
