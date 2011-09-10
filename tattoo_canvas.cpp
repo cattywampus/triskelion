@@ -79,26 +79,17 @@ void TattooCanvas::drawCircles(QPainter *painter) {
     painter->drawArc(0 - 2.0 * curveRadius, y2 - curveRadius, curveRadius * 2.0, curveRadius * 2.0, 0, -60 * 16);
 
     painter->translate(0, y2);
-    painter->rotate(270);
-
     int tatRadius = (std::min(width(), height()) - (2 * Margin)) / 2;
-    drawSpiral(painter, tatRadius - y2, 0);
-    painter->rotate(-270);
+    drawSpiral(painter, tatRadius - y2, 270);
     
     double xOffset = (1.0 / 3.0 * tHeight) * std::cos(deg2rad(30.0));
     double yOffset = (1.0 / 3.0 * tHeight) * std::sin(deg2rad(30.0)); 
 
-    painter->resetTransform();
-    painter->translate(width() / 2.0, height() / 2.0);
-    painter->translate(xOffset, yOffset);
-    painter->rotate(270);
-    drawSpiral(painter, tatRadius - y2, 120);
+    painter->translate(xOffset, y1 - yOffset);
+    drawSpiral(painter, tatRadius - y2, 30);
 
-    painter->resetTransform();
-    painter->translate(width() / 2.0, height() / 2.0);
-    painter->translate(-xOffset, yOffset);
-    painter->rotate(270);
-    drawSpiral(painter, tatRadius - y2, 240);
+    painter->translate(-2.0 * xOffset, 0);
+    drawSpiral(painter, tatRadius - y2, 150);
 }
 
 void TattooCanvas::drawSpiral(QPainter *painter, int radius, int rotate) {
@@ -119,16 +110,14 @@ void TattooCanvas::drawSpiral(QPainter *painter, int radius, int rotate) {
             angle = r / (a + b);
         }
         
-        QPointF point = rotatePoint(
-                QPointF(std::cos(angle) * r, std::sin(angle) * r), 
-                rotate
-        );
-        points.append(QPointF(point.x(), point.y()));
+        points.append(QPointF(std::cos(angle) * r, std::sin(angle) * r));
 
         angle += 0.1;
     };
     QPolygonF polyline(points);
+    painter->rotate(rotate);
     painter->drawPolyline(polyline);
+    painter->rotate(-rotate);
 }
 
 QPointF TattooCanvas::rotatePoint(const QPointF &point, int angle) {
