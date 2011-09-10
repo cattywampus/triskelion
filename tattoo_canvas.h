@@ -19,7 +19,6 @@ protected:
 
 private:
     void drawCircles(QPainter *painter);
-    void drawCurves(QPainter *painter, int radius, int curve1, int curve2);
     void drawSpiral(QPainter *painter, int radius, int rotate);
     QPointF rotatePoint(const QPointF &point, int angle);
     void refreshCanvas();

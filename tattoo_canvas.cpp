@@ -101,53 +101,6 @@ void TattooCanvas::drawCircles(QPainter *painter) {
     drawSpiral(painter, tatRadius - y2, 240);
 }
 
-void TattooCanvas::drawCurves(QPainter *painter, int radius, int curve1, int curve2) {
-    double a = 0;
-    double b = radius / deg2rad(revolution);
-    double r = 22.0;
-    double angle = r / (b + a);
-
-    QPointF center(width() / 2.0, height() / 2.0);
-    
-    QPoint temp(std::cos(angle) * r, std::sin(angle) * r);
-    QPointF p1 = rotatePoint(temp, curve1);
-    QPointF p2 = rotatePoint(temp, curve2);
-
-    p1 += center;
-    p2 += center;
-
-    double slope1 = (p1.y() - center.y()) / (p1.x() - center.x());
-    double slope2 = (p2.y() - center.y()) / (p2.x() - center.x());
-    double y = (p2.y() * slope2 - p1.y() * slope1 + p2.x() - p1.x()) / 
-               (slope2 - slope1);
-    double x = p1.y() * slope1 - y * slope1 + p1.x();
-
-    double curveRadius = std::sqrt(std::pow(x - p1.x(), 2) + 
-                                   std::pow(y - p1.y(), 2));
-    std::cout << "Curve Radius = " << curveRadius << std::endl;
-    double chord = std::sqrt(std::pow(p1.x() - p2.x(), 2) + 
-                             std::pow(p1.y() - p2.y(), 2));
-    
-    double refAngle = rad2deg(std::asin((y - p1.y()) / curveRadius));
-    double startAngle = 0.0;
-
-    if ( (p1.x() - x) >= 0) {
-        // Quandrants 1 & 4
-        startAngle = refAngle;
-    } else {
-        // Quandrants 2 & 3
-        startAngle = 180.0 - refAngle;
-    }
-
-    double spanAngle = 2 * rad2deg(std::asin(chord / 2.0 / curveRadius));
-
-    QRect rect(x - curveRadius, 
-               y - curveRadius, 
-               curveRadius * 2, 
-               curveRadius * 2);
-    painter->drawArc(rect, startAngle*16, spanAngle*16);
-}
-
 void TattooCanvas::drawSpiral(QPainter *painter, int radius, int rotate) {
     double a = 0;
     double b = (radius - a) / deg2rad(revolution);
