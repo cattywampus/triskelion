@@ -19,9 +19,12 @@ protected:
 
 private:
     void drawCircles(QPainter *painter);
+    void drawCustomLayer(QPainter *painter);
     void drawSpiral(QPainter *painter, int radius, int rotate);
+    int getRadius() const;
     QPointF rotatePoint(const QPointF &point, int angle);
     void refreshCanvas();
+
 
     enum { Margin = 20 };
 

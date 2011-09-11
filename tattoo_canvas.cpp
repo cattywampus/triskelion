@@ -49,12 +49,14 @@ void TattooCanvas::paintEvent(QPaintEvent *event) {
     QStylePainter painter(this);
     QPen pen(Qt::black, stroke, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
     painter.setPen(pen);
+    painter.setRenderHint(QPainter::Antialiasing);
 
     int radius = (std::min(width(), height()) - (2 * Margin)) / 2;
     QPoint center(width() / 2, height() / 2);
     painter.drawEllipse(center, radius, radius);
 
     drawCircles(&painter);
+    drawCustomLayer(&painter);
     /*drawSpiral(&painter, radius, 0);
     drawSpiral(&painter, radius, 120);
     drawSpiral(&painter, radius, 240);
@@ -90,6 +92,36 @@ void TattooCanvas::drawCircles(QPainter *painter) {
 
     painter->translate(-2.0 * xOffset, 0);
     drawSpiral(painter, tatRadius - y2, 150);
+
+    painter->resetTransform();
+}
+
+void TattooCanvas::drawCustomLayer(QPainter *painter) {
+    painter->translate(width() / 2.0, height() / 2.0);
+    QPen pen(Qt::black, 1, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
+    painter->setPen(pen);
+
+    double tHeight = std::sqrt(3.0 * std::pow((double) curveRadius, 2.0));
+    double y = 1.0 / 3.0 * tHeight;
+
+    int radius = curveRadius - (stroke / 2);
+    painter->translate(-curveRadius, -y);
+    painter->drawEllipse(QPoint(0, 0), radius, radius);
+    painter->drawPie(-radius, -radius, 2 * radius, 2 * radius, 0, -60 * 16);
+    
+    // Draw curve angle
+    painter->drawPie(-10, -10, 20, 20, 0, -60 * 16);
+    painter->drawText(10, 15, QString(QChar(0x03D5)));
+
+    int offset = stroke + 5;
+    painter->translate(curveRadius, y);
+    painter->drawArc(-getRadius() - offset, 
+                     -getRadius() - offset, 
+                     2 * getRadius() + 2 * offset, 
+                     2 * getRadius() + 2 * offset, 
+                     30 * 16, 
+                     -120 * 16);
+    painter->resetTransform();
 }
 
 void TattooCanvas::drawSpiral(QPainter *painter, int radius, int rotate) {
@@ -118,6 +150,10 @@ void TattooCanvas::drawSpiral(QPainter *painter, int radius, int rotate) {
     painter->rotate(rotate);
     painter->drawPolyline(polyline);
     painter->rotate(-rotate);
+}
+
+int TattooCanvas::getRadius() const {
+    return (std::min(width(), height()) - (2 * Margin)) / 2;
 }
 
 QPointF TattooCanvas::rotatePoint(const QPointF &point, int angle) {
