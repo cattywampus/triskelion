@@ -136,7 +136,7 @@ void TattooCanvas::drawCustomLayer(QPainter *painter) {
     // Add visible theta & r guides
     painter->translate(curveRadius, y);
     painter->translate(0, 2 * y - tHeight);
-    painter->drawLine(0, 0, 0, -2 * curveRadius);
+    painter->drawLine(0, 0, 0, -50);
     painter->rotate(270);
     painter->setPen(QPen(Qt::gray, 1, Qt::DashLine, Qt::RoundCap, Qt::RoundJoin));
     int maxAngle = 120;
