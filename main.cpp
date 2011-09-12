@@ -52,6 +52,7 @@ int main(int argc, char *argv[]) {
     QHBoxLayout *layout = new QHBoxLayout;
     layout->addLayout(controlPanel);
     layout->addWidget(canvas);
+    layout->setStretchFactor(canvas, 1);
 
     window->setLayout(layout);
 
