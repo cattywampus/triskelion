@@ -27,6 +27,7 @@ TattooCanvas::TattooCanvas(QWidget *parent) {
     revolution = 180.0;
     stroke = 1;
     curveRadius = 30;
+    markingsVisible = false;
 
     setMinimumSize(400, 400);
 }
@@ -41,6 +42,12 @@ void TattooCanvas::setStroke(int stroke) {
     this->stroke = stroke;
 
     std::cout << "New stroke is " << stroke << std::endl;
+
+    update();
+}
+
+void TattooCanvas::setMarkingsVisible(int enableMarkings) {
+    markingsVisible = enableMarkings == Qt::Checked;
 
     update();
 }
@@ -67,7 +74,9 @@ void TattooCanvas::paintEvent(QPaintEvent *event) {
     QPoint center(width() / 2, height() / 2);
     painter.drawEllipse(center, radius, radius);
 
-    drawCustomLayer(&painter);
+    if (markingsVisible) {
+        drawCustomLayer(&painter);
+    }
     drawCircles(&painter);
 }
 

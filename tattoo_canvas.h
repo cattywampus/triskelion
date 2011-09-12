@@ -13,6 +13,7 @@ public:
 public slots:
     void setCurveRadius(int radius);
     void setStroke(int stroke);
+    void setMarkingsVisible(int enableMarkings);
 
 protected:
     void paintEvent(QPaintEvent *event);
@@ -34,6 +35,7 @@ private:
     double revolution;
     int curveRadius;
     QPixmap canvas;
+    bool markingsVisible;
     int stroke;
 };
 

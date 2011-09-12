@@ -1,5 +1,6 @@
 
 #include <QApplication>
+#include <QCheckBox>
 #include <QHBoxLayout>
 #include <QLabel>
 #include <QSlider>
@@ -23,6 +24,7 @@ int main(int argc, char *argv[]) {
     QObject::connect(strokeSlider, SIGNAL(valueChanged(int)),
                      strokeLabel, SLOT(setNum(int)));
     QHBoxLayout *strokeLayout = new QHBoxLayout;
+    strokeLayout->addWidget(new QLabel("Pen Width: "));
     strokeLayout->addWidget(strokeSlider);
     strokeLayout->addWidget(strokeLabel);
 
@@ -35,12 +37,16 @@ int main(int argc, char *argv[]) {
     QObject::connect(radiusSlider, SIGNAL(valueChanged(int)),
                     radiusLabel, SLOT(setNum(int)));
     QHBoxLayout *radiusLayout = new QHBoxLayout;
+    radiusLayout->addWidget(new QLabel("Tangent Radius: "));
     radiusLayout->addWidget(radiusSlider);
     radiusLayout->addWidget(radiusLabel);
+
+    QCheckBox *showMarkings = new QCheckBox("Show custom markings layer");
 
     QVBoxLayout *controlPanel = new QVBoxLayout;
     controlPanel->addLayout(strokeLayout);
     controlPanel->addLayout(radiusLayout);
+    controlPanel->addWidget(showMarkings);
     controlPanel->addStretch();
 
     TattooCanvas *canvas = new TattooCanvas;
@@ -48,6 +54,8 @@ int main(int argc, char *argv[]) {
                      canvas, SLOT(setStroke(int)));
     QObject::connect(radiusSlider, SIGNAL(valueChanged(int)),
                      canvas, SLOT(setCurveRadius(int)));
+    QObject::connect(showMarkings, SIGNAL(stateChanged(int)),
+                     canvas, SLOT(setMarkingsVisible(int)));
 
     QHBoxLayout *layout = new QHBoxLayout;
     layout->addLayout(controlPanel);
