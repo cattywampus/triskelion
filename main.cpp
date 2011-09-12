@@ -57,7 +57,7 @@ int main(int argc, char *argv[]) {
     window->setLayout(layout);
 
     // Set default values
-    strokeSlider->setSliderPosition(3);
+    strokeSlider->setSliderPosition(10);
     radiusSlider->setSliderPosition(30);
 
     window->show();
