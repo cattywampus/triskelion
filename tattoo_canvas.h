@@ -18,9 +18,12 @@ protected:
     void paintEvent(QPaintEvent *event);
 
 private:
+    double computeSpiralRadius(double angle);
+    QPointF convertToCartesian(double angle, double radius);
     void drawCircles(QPainter *painter);
     void drawCustomLayer(QPainter *painter);
     void drawSpiral(QPainter *painter, int radius, int rotate);
+    int getOriginOffset() const;
     int getRadius() const;
     QPointF rotatePoint(const QPointF &point, int angle);
     void refreshCanvas();

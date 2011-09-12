@@ -45,6 +45,18 @@ void TattooCanvas::setStroke(int stroke) {
     update();
 }
 
+double TattooCanvas::computeSpiralRadius(double angle) {
+    double a = 0;
+    double b = (getRadius() + getOriginOffset() - a) / deg2rad(revolution);
+    return a + b * angle;
+    
+}
+
+QPointF TattooCanvas::convertToCartesian(double angle, double radius) {
+    return QPointF(std::cos(angle) * radius, std::sin(angle) * radius);
+
+}
+
 void TattooCanvas::paintEvent(QPaintEvent *event) {
     QStylePainter painter(this);
     QPen pen(Qt::black, stroke, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
@@ -55,15 +67,8 @@ void TattooCanvas::paintEvent(QPaintEvent *event) {
     QPoint center(width() / 2, height() / 2);
     painter.drawEllipse(center, radius, radius);
 
-    drawCircles(&painter);
     drawCustomLayer(&painter);
-    /*drawSpiral(&painter, radius, 0);
-    drawSpiral(&painter, radius, 120);
-    drawSpiral(&painter, radius, 240);
-
-    drawCurves(&painter, radius, 0, 120);
-    drawCurves(&painter, radius, 120, 240);
-    drawCurves(&painter, radius, 240, 0);*/
+    drawCircles(&painter);
 }
 
 void TattooCanvas::drawCircles(QPainter *painter) {
@@ -98,29 +103,54 @@ void TattooCanvas::drawCircles(QPainter *painter) {
 
 void TattooCanvas::drawCustomLayer(QPainter *painter) {
     painter->translate(width() / 2.0, height() / 2.0);
-    QPen pen(Qt::black, 1, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
-    painter->setPen(pen);
+    QPen originalPen = painter->pen();
+    painter->setPen(QPen(Qt::black, 1, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
 
     double tHeight = std::sqrt(3.0 * std::pow((double) curveRadius, 2.0));
-    double y = 1.0 / 3.0 * tHeight;
+    double y = 2.0 / 3.0 * tHeight;
 
     int radius = curveRadius - (stroke / 2);
-    painter->translate(-curveRadius, -y);
+    painter->translate(0, y);
     painter->drawEllipse(QPoint(0, 0), radius, radius);
-    painter->drawPie(-radius, -radius, 2 * radius, 2 * radius, 0, -60 * 16);
+    painter->drawPie(-radius, -radius, 2 * radius, 2 * radius, 60 * 16, 60 * 16);
+    painter->setPen(QPen(Qt::black, 5, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
+    painter->drawPoint(0, 0); 
+    painter->setPen(QPen(Qt::black, 1, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
     
     // Draw curve angle
-    painter->drawPie(-10, -10, 20, 20, 0, -60 * 16);
-    painter->drawText(10, 15, QString(QChar(0x03D5)));
+    painter->drawPie(-10, -10, 20, 20, 60 * 16, 60 * 16);
+    QChar phi(0x03D5);
+    int charWidth = painter->fontMetrics().width(phi);
+    int charHeight = painter->fontMetrics().height();
+    painter->drawText(-charWidth / 2, -charHeight, QString(phi));
+   
+    // Add visible theta & r guides
+    painter->translate(0, -tHeight);
+    painter->drawLine(0, 0, 0, -2 * curveRadius);
+    painter->rotate(270);
+    painter->setPen(QPen(Qt::gray, 1, Qt::DashLine, Qt::RoundCap, Qt::RoundJoin));
+    int maxAngle = 120;
+    for (int angle = 30; angle <= maxAngle; angle += 10) {
+        double r = computeSpiralRadius(deg2rad(angle)) - stroke / 2;
+        QPointF pointOnSpiral = convertToCartesian(deg2rad(angle), r);
+        if (angle == maxAngle) {
+            painter->setPen(QPen(Qt::black, 1, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
+        }
+        painter->drawLine(QPointF(0, 0), pointOnSpiral);
+    }
+    painter->drawArc(-40, -40, 80, 80, 0, -maxAngle * 16);
+    painter->rotate(-270);
 
-    int offset = stroke + 5;
-    painter->translate(curveRadius, y);
-    painter->drawArc(-getRadius() - offset, 
-                     -getRadius() - offset, 
-                     2 * getRadius() + 2 * offset, 
-                     2 * getRadius() + 2 * offset, 
-                     30 * 16, 
-                     -120 * 16);
+    // recenter transform
+    painter->translate(0, tHeight - y);
+    for (int i = 0; i < 360; i += 90) {
+        painter->rotate(i);
+        int x = getRadius() + stroke / 2 + 2;
+        painter->drawLine(x, 0, x + 5, 0);
+        painter->rotate(-i);
+    }
+
+    painter->setPen(originalPen);
     painter->resetTransform();
 }
 
@@ -142,7 +172,7 @@ void TattooCanvas::drawSpiral(QPainter *painter, int radius, int rotate) {
             angle = r / (a + b);
         }
         
-        points.append(QPointF(std::cos(angle) * r, std::sin(angle) * r));
+        points.append(convertToCartesian(angle, r));
 
         angle += 0.1;
     };
@@ -150,6 +180,10 @@ void TattooCanvas::drawSpiral(QPainter *painter, int radius, int rotate) {
     painter->rotate(rotate);
     painter->drawPolyline(polyline);
     painter->rotate(-rotate);
+}
+
+int TattooCanvas::getOriginOffset() const {
+    return std::sqrt(3.0 * std::pow((double) curveRadius, 2.0)) / 3.0;
 }
 
 int TattooCanvas::getRadius() const {
