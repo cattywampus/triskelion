@@ -107,25 +107,26 @@ void TattooCanvas::drawCustomLayer(QPainter *painter) {
     painter->setPen(QPen(Qt::black, 1, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
 
     double tHeight = std::sqrt(3.0 * std::pow((double) curveRadius, 2.0));
-    double y = 2.0 / 3.0 * tHeight;
+    double y = 1.0 / 3.0 * tHeight;
 
     int radius = curveRadius - (stroke / 2);
-    painter->translate(0, y);
+    painter->translate(-curveRadius, -y);
     painter->drawEllipse(QPoint(0, 0), radius, radius);
-    painter->drawPie(-radius, -radius, 2 * radius, 2 * radius, 60 * 16, 60 * 16);
+    painter->drawPie(-radius, -radius, 2 * radius, 2 * radius, 0 * 16, -60 * 16);
     painter->setPen(QPen(Qt::black, 5, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
     painter->drawPoint(0, 0); 
     painter->setPen(QPen(Qt::black, 1, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
     
     // Draw curve angle
-    painter->drawPie(-10, -10, 20, 20, 60 * 16, 60 * 16);
+    painter->drawPie(-10, -10, 20, 20, 0 * 16, -60 * 16);
     QChar phi(0x03D5);
     int charWidth = painter->fontMetrics().width(phi);
     int charHeight = painter->fontMetrics().height();
-    painter->drawText(-charWidth / 2, -charHeight, QString(phi));
+    painter->drawText(charWidth, charHeight - 3, QString(phi));
    
     // Add visible theta & r guides
-    painter->translate(0, -tHeight);
+    painter->translate(curveRadius, y);
+    painter->translate(0, 2 * y - tHeight);
     painter->drawLine(0, 0, 0, -2 * curveRadius);
     painter->rotate(270);
     painter->setPen(QPen(Qt::gray, 1, Qt::DashLine, Qt::RoundCap, Qt::RoundJoin));
@@ -142,7 +143,7 @@ void TattooCanvas::drawCustomLayer(QPainter *painter) {
     painter->rotate(-270);
 
     // recenter transform
-    painter->translate(0, tHeight - y);
+    painter->translate(0, -2 * y + tHeight);
     for (int i = 0; i < 360; i += 90) {
         painter->rotate(i);
         int x = getRadius() + stroke / 2 + 2;
