@@ -150,9 +150,24 @@ void TattooCanvas::drawCustomLayer(QPainter *painter) {
     }
     painter->drawArc(-40, -40, 80, 80, 0, -maxAngle * 16);
     painter->rotate(-270);
+    QChar theta(0x03F4);
+    painter->drawText(40 + charWidth / 2, 0, theta);
+    painter->drawText(60, 50, "r");
 
     // recenter transform
     painter->translate(0, -2 * y + tHeight);
+    QString formula = QString("r = a + b") + theta;
+    formula.append('\n');
+    formula.append("a = 0\n");
+    formula.append(QString("b = l / ") + QChar(0x03C0));
+    painter->drawText(15, -120, 100, 100, Qt::AlignLeft | Qt::TextWordWrap, formula);
+  
+    painter->save();
+    painter->setPen(QPen(Qt::gray, 1, Qt::DotLine, Qt::RoundCap, Qt::RoundJoin));
+    painter->drawLine(0, 0, getRadius(), 0);
+    painter->restore();
+    painter->drawText(getRadius() - 40, -2, "l");
+
     for (int i = 0; i < 360; i += 90) {
         painter->rotate(i);
         int x = getRadius() + stroke / 2 + 2;
