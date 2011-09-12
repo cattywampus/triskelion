@@ -67,6 +67,7 @@ int main(int argc, char *argv[]) {
     // Set default values
     strokeSlider->setSliderPosition(10);
     radiusSlider->setSliderPosition(30);
+    showMarkings->setCheckState(Qt::Checked);
 
     window->show();
 
