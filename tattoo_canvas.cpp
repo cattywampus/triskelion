@@ -160,12 +160,18 @@ void TattooCanvas::drawCustomLayer(QPainter *painter) {
     painter->translate(0, -2 * y + tHeight);
     QString aChar = QString("") + QChar(0xD835) + QChar(0xDC4E);
     QString pi = QString("") + QChar(0xD835) + QChar(0xDF0B);
+    // Line 1
     QString formula = rChar + QString(" = ") + aChar + theta;
     formula.append('\n');
-    formula.append(aChar + QString(" = ") + QChar(0x2113) + QString(" / ") + pi);
+
+    // Line 2
+    QString tChar = QString("") + QChar(0xD835) + QChar(0xDC61);
+    formula.append(aChar + QString(" = (") + QChar(0x2113) + QString(" + ") + QChar(0x2153));
+    formula.append(QChar(0x221A) + QString("3") + tChar + QChar(0x00B2) + QString(") / ") + pi);
     formula.append('\n');
+
     formula.append(theta + QString(" = [0, ") + pi + QString("]"));
-    painter->drawText(15, -120, 100, 100, Qt::AlignLeft | Qt::TextWordWrap, formula);
+    painter->drawText(15, -120, 150, 100, Qt::AlignLeft | Qt::TextWordWrap, formula);
  
     //𝜋
     //MATHEMATICAL ITALIC SMALL PI
