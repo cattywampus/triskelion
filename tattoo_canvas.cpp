@@ -69,6 +69,7 @@ void TattooCanvas::paintEvent(QPaintEvent *event) {
     QPen pen(Qt::black, stroke, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
     painter.setPen(pen);
     painter.setRenderHint(QPainter::Antialiasing);
+    painter.setFont(QFont("Times"));
 
     int radius = (std::min(width(), height()) - (2 * Margin)) / 2;
     QPoint center(width() / 2, height() / 2);
@@ -131,7 +132,7 @@ void TattooCanvas::drawCustomLayer(QPainter *painter) {
     QChar phi(0x03D5);
     int charWidth = painter->fontMetrics().width(phi);
     int charHeight = painter->fontMetrics().height();
-    painter->drawText(charWidth, charHeight - 3, QString(phi));
+    //painter->drawText(charWidth, charHeight - 3, QString(phi));
    
     // Add visible theta & r guides
     painter->translate(curveRadius, y);
@@ -150,23 +151,31 @@ void TattooCanvas::drawCustomLayer(QPainter *painter) {
     }
     painter->drawArc(-40, -40, 80, 80, 0, -maxAngle * 16);
     painter->rotate(-270);
-    QChar theta(0x03F4);
+    QString theta(QString("") + QChar(0xD835) + QChar(0xDF03));
     painter->drawText(40 + charWidth / 2, 0, theta);
-    painter->drawText(60, 50, "r");
+    QString rChar = QString("") + QChar(0xD835) + QChar(0xDC5F);
+    painter->drawText(60, 50, rChar);
 
     // recenter transform
     painter->translate(0, -2 * y + tHeight);
-    QString formula = QString("r = a + b") + theta;
+    QString aChar = QString("") + QChar(0xD835) + QChar(0xDC4E);
+    QString pi = QString("") + QChar(0xD835) + QChar(0xDF0B);
+    QString formula = rChar + QString(" = ") + aChar + theta;
     formula.append('\n');
-    formula.append("a = 0\n");
-    formula.append(QString("b = l / ") + QChar(0x03C0));
+    formula.append(aChar + QString(" = ") + QChar(0x2113) + QString(" / ") + pi);
+    formula.append('\n');
+    formula.append(theta + QString(" = [0, ") + pi + QString("]"));
     painter->drawText(15, -120, 100, 100, Qt::AlignLeft | Qt::TextWordWrap, formula);
-  
+ 
+    //𝜋
+    //MATHEMATICAL ITALIC SMALL PI
+    //Unicode: U+1D70B (U+D835 U+DF0B), UTF-8: F0 9D 9C 8B
+ 
     painter->save();
     painter->setPen(QPen(Qt::gray, 1, Qt::DotLine, Qt::RoundCap, Qt::RoundJoin));
     painter->drawLine(0, 0, getRadius(), 0);
     painter->restore();
-    painter->drawText(getRadius() - 40, -2, "l");
+    painter->drawText(getRadius() - 40, -2, QChar(0x2113));
 
     for (int i = 0; i < 360; i += 90) {
         painter->rotate(i);
