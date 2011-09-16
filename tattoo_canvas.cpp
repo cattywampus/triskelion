@@ -29,7 +29,9 @@ TattooCanvas::TattooCanvas(QWidget *parent) {
     curveRadius = 30;
     markingsVisible = false;
 
-    setMinimumSize(400, 400);
+    setMinimumSize(600, 600);
+    
+    this->setPalette(QPalette(QPalette::Window, Qt::white));
 }
 
 void TattooCanvas::setCurveRadius(int radius) {
@@ -68,8 +70,11 @@ void TattooCanvas::paintEvent(QPaintEvent *event) {
     QStylePainter painter(this);
     QPen pen(Qt::black, stroke, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
     painter.setPen(pen);
+    painter.setBrush(QBrush(Qt::white));
     painter.setRenderHint(QPainter::Antialiasing);
     painter.setFont(QFont("Times"));
+
+    painter.fillRect(0, 0, width(), height(), QBrush(Qt::white));
 
     int radius = (std::min(width(), height()) - (2 * Margin)) / 2;
     QPoint center(width() / 2, height() / 2);
@@ -121,11 +126,13 @@ void TattooCanvas::drawCustomLayer(QPainter *painter) {
 
     int radius = curveRadius - (stroke / 2);
     painter->translate(-curveRadius, -y);
-    painter->drawEllipse(QPoint(0, 0), radius, radius);
+    painter->drawEllipse(QPoint(0, 0), curveRadius, curveRadius);
     painter->drawPie(-radius, -radius, 2 * radius, 2 * radius, 0 * 16, -60 * 16);
     painter->setPen(QPen(Qt::black, 5, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
     painter->drawPoint(0, 0); 
     painter->setPen(QPen(Qt::black, 1, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
+    QString tChar = QString("") + QChar(0xD835) + QChar(0xDC61);
+    painter->drawText(radius / 2, -3, tChar);
     
     // Draw curve angle
     painter->drawPie(-10, -10, 20, 20, 0 * 16, -60 * 16);
@@ -165,7 +172,6 @@ void TattooCanvas::drawCustomLayer(QPainter *painter) {
     formula.append('\n');
 
     // Line 2
-    QString tChar = QString("") + QChar(0xD835) + QChar(0xDC61);
     formula.append(aChar + QString(" = (") + QChar(0x2113) + QString(" + ") + QChar(0x2153));
     formula.append(QChar(0x221A) + QString("3") + tChar + QChar(0x00B2) + QString(") / ") + pi);
     formula.append('\n');
