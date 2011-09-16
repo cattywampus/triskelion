@@ -181,7 +181,10 @@ void TattooCanvas::drawCustomLayer(QPainter *painter) {
     formula.append('\n');
 
     formula.append(theta + QString(" = [0, ") + pi + QString("]"));
-    painter->drawText(15, -120, 150, 100, Qt::AlignLeft | Qt::TextWordWrap, formula);
+    int formulaWidth = painter->fontMetrics().width(formula);
+    painter->drawText(getRadius() / 2 - formulaWidth / 2, 
+                      -getRadius() / 2 - charHeight * 3 / 2, 
+                      formulaWidth, 100, Qt::AlignLeft | Qt::TextWordWrap, formula);
  
     //𝜋
     //MATHEMATICAL ITALIC SMALL PI
