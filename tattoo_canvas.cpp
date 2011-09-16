@@ -172,7 +172,8 @@ void TattooCanvas::drawCustomLayer(QPainter *painter) {
     formula.append('\n');
 
     // Line 2
-    formula.append(aChar + QString(" = (") + QChar(0x2113) + QString(" + ") + QChar(0x2153));
+    QString lChar = QString("") + QChar(0xD835) + QChar(0xDC59);
+    formula.append(aChar + QString(" = (") + lChar + QString(" + ") + QChar(0x2153));
     formula.append(QChar(0x221A) + QString("3") + tChar + QChar(0x00B2) + QString(") / ") + pi);
     formula.append('\n');
 
@@ -187,7 +188,8 @@ void TattooCanvas::drawCustomLayer(QPainter *painter) {
     painter->setPen(QPen(Qt::gray, 1, Qt::DotLine, Qt::RoundCap, Qt::RoundJoin));
     painter->drawLine(0, 0, getRadius(), 0);
     painter->restore();
-    painter->drawText(getRadius() - 40, -2, QChar(0x2113));
+    double distance = computeSpiralRadius(deg2rad(90));
+    painter->drawText(distance + (getRadius() - distance) / 2, -2, lChar);
 
     for (int i = 0; i < 360; i += 90) {
         painter->rotate(i);
