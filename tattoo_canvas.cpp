@@ -148,8 +148,10 @@ void TattooCanvas::drawCustomLayer(QPainter *painter) {
     painter->rotate(270);
     painter->setPen(QPen(Qt::gray, 1, Qt::DashLine, Qt::RoundCap, Qt::RoundJoin));
     int maxAngle = 120;
+    QString rChar = QString("") + QChar(0xD835) + QChar(0xDC5F);
+    double r;
     for (int angle = 30; angle <= maxAngle; angle += 10) {
-        double r = computeSpiralRadius(deg2rad(angle)) - stroke / 2;
+        r = computeSpiralRadius(deg2rad(angle)) - stroke / 2;
         QPointF pointOnSpiral = convertToCartesian(deg2rad(angle), r);
         if (angle == maxAngle) {
             painter->setPen(QPen(Qt::black, 1, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
@@ -160,8 +162,9 @@ void TattooCanvas::drawCustomLayer(QPainter *painter) {
     painter->rotate(-270);
     QString theta(QString("") + QChar(0xD835) + QChar(0xDF03));
     painter->drawText(40 + charWidth / 2, 0, theta);
-    QString rChar = QString("") + QChar(0xD835) + QChar(0xDC5F);
-    painter->drawText(60, 50, rChar);
+    painter->drawText(r / 2 * std::cos(deg2rad(30)),
+                      r / 2 * std::sin(deg2rad(30)) + charHeight,
+                      rChar);
 
     // recenter transform
     painter->translate(0, -2 * y + tHeight);
