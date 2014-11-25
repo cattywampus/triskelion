@@ -1,0 +1,6 @@
+*.app
+*.swp
+*.pro
+Makefile
+moc_*.cpp
+*.o
