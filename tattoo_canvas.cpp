@@ -29,7 +29,7 @@ TattooCanvas::TattooCanvas(QWidget *parent) {
     curveRadius = 30;
     markingsVisible = false;
 
-    setMinimumSize(600, 600);
+    setMinimumSize(400, 400);
     
     this->setPalette(QPalette(QPalette::Window, Qt::white));
 }
@@ -70,20 +70,21 @@ void TattooCanvas::paintEvent(QPaintEvent *event) {
     QStylePainter painter(this);
     QPen pen(Qt::black, stroke, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
     painter.setPen(pen);
-    painter.setBrush(QBrush(Qt::white));
     painter.setRenderHint(QPainter::Antialiasing);
     painter.setFont(QFont("Times"));
 
     painter.fillRect(0, 0, width(), height(), QBrush(Qt::white));
 
-    int radius = (std::min(width(), height()) - (2 * Margin)) / 2;
-    QPoint center(width() / 2, height() / 2);
-    painter.drawEllipse(center, radius, radius);
 
     if (markingsVisible) {
         drawCustomLayer(&painter);
     }
     drawCircles(&painter);
+    
+    int radius = (std::min(width(), height()) - (2 * Margin)) / 2;
+    QPoint center(width() / 2, height() / 2);
+    pen.setBrush(Qt::NoBrush);
+    painter.drawEllipse(center, radius, radius);
 }
 
 void TattooCanvas::drawCircles(QPainter *painter) {
